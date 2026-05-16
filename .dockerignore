@@ -1,0 +1,9 @@
+.venv/
+.vscode/
+data/
+notebooks/
+.git/
+.gitignore
+gerar_teste.py
+__pycache__/
+*.pyc
