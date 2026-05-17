@@ -1,4 +1,3 @@
-
 import os
 import logging
 
@@ -33,7 +32,6 @@ def construir_e_treinar_modelo(X_train, Y_train, X_test, Y_test, caminho_salvar_
     
     model.compile(optimizer='adam', loss='mean_squared_error')
     
-    # CONFIGURANDO O EARLY STOPPING
     early_stop = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
     
     print("Iniciando o treinamento com Early Stopping (Até 100 épocas)...")

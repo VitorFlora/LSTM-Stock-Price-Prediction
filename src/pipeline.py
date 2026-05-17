@@ -17,7 +17,6 @@ def rodar_pipeline():
     for script in scripts_pipeline:
         print(f"\n Iniciando estágio: {script}...")
         
-        # O subprocess.run executa o comando no terminal e espera ele terminar
         resultado = subprocess.run([python_exec, script])
         
         if resultado.returncode != 0:

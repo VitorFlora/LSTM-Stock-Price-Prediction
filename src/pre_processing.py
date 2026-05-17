@@ -25,12 +25,11 @@ def preparar_dados(caminho_csv, dias_historico=60):
         if len(df) < dias_analise:
             anos_estaveis = i - 1
             break
-            
-        # Isola o ano valido
+
         inicio_fatia = len(df) - (i * dias_1_ano)
         fim_fatia = len(df) - ((i - 1) * dias_1_ano)
         
-        # Usamos um caso especial quando fim_fatia == len(df) para garantir que pegamos até o final do DataFrame,
+        # Foi usado um caso especial quando fim_fatia == len(df) para garantir que pegamos até o final do DataFrame,
         # pois o slicing iloc[inicio:fim] é exclusivo do índice final. Assim, iloc[inicio_fatia:] pega até o último registro,
         # enquanto iloc[inicio_fatia:fim_fatia] pega até fim_fatia-1.
         if fim_fatia == len(df):

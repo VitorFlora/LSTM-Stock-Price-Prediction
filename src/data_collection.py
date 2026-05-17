@@ -12,14 +12,12 @@ def baixar_dados(ticker, data_inicio, data_fim, caminho_salvar):
     try:
         df = yf.download(ticker, start=data_inicio, end=data_fim, auto_adjust=True)
         
-        # Correção para o Pylance: Verifica estritamente se o resultado é um DataFrame do Pandas
         if not isinstance(df, pd.DataFrame) or df.empty:
             print(f"Aviso: Nenhum dado válido encontrado para o código '{ticker}'. Verifique se o símbolo está correto.")
             return False
 
         os.makedirs(os.path.dirname(caminho_salvar), exist_ok=True)
 
-        # Salva o DataFrame como um arquivo CSV
         df.to_csv(caminho_salvar)
         print(f"Sucesso! Dados salvos em: {caminho_salvar}")
         return True
