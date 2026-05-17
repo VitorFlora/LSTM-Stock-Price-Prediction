@@ -70,14 +70,44 @@ O modelo Stacked LSTM exige um formato de dados muito específico para realizar 
 
     O que este script faz? Ele varre a pasta de dados brutos (`data/raw/`), identifica o último ativo que foi processado pelo pipeline, extrai o preço exato de fechamento dos últimos 60 dias e devolve a lista formatada e pronta para a API.
 
-1. **Acessar o Painel da API:**
+2. **Acessar o Painel da API:**
 
     Abra o seu navegador e acesse a interface do Swagger UI: `http://127.0.0.1:8000/docs`
 
-2. **Realizar a Previsão:**
+3. **Realizar a Previsão:**
 
     - Expanda o endpoint `POST /prever`.
     - Clique no botão **"Try it out"** (Testar).
     - No campo `Request body`, apague o JSON padrão e cole a lista que foi gerada no terminal pelo script do Passo 1.
     - Clique no botão azul **"Execute"**.
     - Em instantes, a API passará seus dados pelo Scaler, fará a inferência na Rede Neural e devolverá, na seção "Server response", o valor exato da previsão para o próximo pregão.
+
+4. **Realizar a verificação continua:**
+
+    - Expanda o endpoint `POST /feedback`.
+    - Clique no botão **"Try it out"** (Testar).
+    - No campo `Request body`, apague o JSON padrão e cole a lista que foi gerada no terminal pelo script do Passo 1.
+
+## 📊 Ciclo de Vida e Monitoramento do Modelo em Produção
+
+Para garantir que a rede neural mantenha sua alta performance em um ambiente dinâmico como o mercado financeiro e não sofra com degradação ou alucinações, a esteira de MLOps foi projetada para suportar uma estratégia de monitoramento contínuo em produção baseada em três pilares:
+
+1. Detecção de Data Drift (Desvio de Dados)
+O pipeline monitora as distribuições estatísticas dos dados de entrada (Janela de 60 dias) que chegam via API. Caso o mercado passe por um evento extremo de volatilidade e os preços fujam drasticamente dos limites operados pelo scaler.pkl original, o sistema registra um log de aviso (Warning). Isso sinaliza que o modelo está operando em um cenário desconhecido, disparando a necessidade de reajuste de escala.
+
+2. Avaliação de Performance Real (Feedback Loop)
+Como o modelo prevê o preço do pregão seguinte, a arquitetura permite a criação de um loop de feedback diário:
+
+   - O sistema armazena a previsão gerada pela API em um banco de dados de telemetria.
+   - No fechamento do dia seguinte, o pipeline busca o preço real do ativo e calcula de forma retroativa as métricas reais de produção (MAPE e RMSE).
+   - Se o erro percentual (MAPE) ultrapassar um limite tolerável estipulado (> 15% de erro), um gatilho de degradação é acionado.
+
+3. Esteira de Retreinamento Automatizado (Continuous Training)
+Para solucionar o Concept Drift, o script pipeline.py foi desenhado para ser acoplado a um agendador (como Airflow ou Cron).
+
+   - Fluxo de Correção: Uma vez por semana (ou ao atingir o gatilho de erro), deve se executar o pipeline.py.
+   - O script coleta a nova janela de dados atualizada, reavalia a volatilidade histórica, treina uma nova versão da Stacked LSTM e substitui o arquivo .keras antigo, garantindo que o modelo nunca fique obsoleto.
+
+## 📺 Demonstração em Vídeo
+
+Assista à apresentação completa da arquitetura, do pipeline de MLOps e do monitoramento da API no YouTube: ```https://youtu.be/MB9XfuT8Ne4```
