@@ -37,7 +37,7 @@ def construir_e_treinar_modelo(X_train, Y_train, X_test, Y_test, caminho_salvar_
     print("Iniciando o treinamento com Early Stopping (Até 100 épocas)...")
     
     model.fit(X_train, Y_train, 
-              batch_size=32, 
+              batch_size=1024, 
               epochs=100, 
               validation_data=(X_test, Y_test),
               callbacks=[early_stop]) 
